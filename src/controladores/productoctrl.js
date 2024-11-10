@@ -27,43 +27,36 @@ export const getproductosid = async (req, res) => {
 };
 export const postproductos = async (req, res) => {
     try {
-        const productos = req.body;
-        const idsInsertados = []; 
+        const { prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo } = req.body;
+        const prod_imagen = req.file ? `/uploads/${req.file.filename}` : null;
         
-        // Validar si req.body es un array
-        if (!Array.isArray(productos)) {
-            return res.status(400).json({ message: "El cuerpo de la solicitud debe ser un array de productos." });
-        }
-    
-        for (let producto of productos) {                               
-            const { prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen } = producto;   
-    
-            // Validar que los campos requeridos estén presentes
-            if (!prod_codigo || !prod_nombre || typeof prod_stock !== 'number' || typeof prod_precio !== 'number' || !prod_activo || !prod_imagen) {
-                return res.status(400).json({ message: "Faltan datos requeridos o tipos de datos incorrectos en uno o más registros." });
-            }
+        console.log("Datos del producto:", req.body);
+        console.log("Archivo de imagen:", req.file);
 
-            const [result] = await conmysql.query(  
-                "INSERT INTO productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) VALUES (?, ?, ?, ?, ?, ?)",
-                [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen]
-            );
-            
-            idsInsertados.push(result.insertId);
+        const [fila] = await conmysql.query('SELECT * FROM productos WHERE prod_codigo = ?', [prod_codigo]);
+        if (fila.length > 0) {
+            return res.status(400).json({
+                id: 0,
+                message: `Producto con código ${prod_codigo} ya está registrado`
+            });
         }
 
-        res.json({ message: "Productos insertados correctamente", idsInsertados });
-    
-    } catch (error) {
-        console.error('Error al insertar productos:', error);
-        return res.status(500).json({
-            message: "Error al insertar productos",
-            error: error.message || 'Error no especificado',
-            sqlError: error.sqlMessage || 'No se proporcionó mensaje SQL',
-            code: error.code || 'Sin código de error'
+        const [rows] = await conmysql.query(
+            'INSERT INTO productos (prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen) VALUES (?, ?, ?, ?, ?, ?)',
+            [prod_codigo, prod_nombre, prod_stock, prod_precio, prod_activo, prod_imagen]
+        );
+
+        res.status(201).json({
+            id: rows.insertId,
+            message: "Producto registrado con éxito :)"
         });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ message: error.message });
     }
-    
 };
+
+
 
 
 
