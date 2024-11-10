@@ -5,6 +5,7 @@ import usuarios_routes from "./routes/usuarios_routes.js";
 import producto_routes from "./routes/producto_routes.js";
 import pedidos_routes from "./routes/pedidos_routes.js";
 import ped_det_routes from "./routes/ped_det_routes.js";
+import path from 'path';  // Importa el módulo 'path' para gestionar rutas de archivos
 
 const app = express();
 
@@ -18,10 +19,13 @@ app.use(cors({
 
 app.use(express.json()); // interpreta los objetos enviados como JSON
 
-// Rutas
+// Ruta para servir imágenes desde el directorio 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Rutas de la API
 app.use("/api", clientes_routes);
 app.use("/api", usuarios_routes);
-app.use("/api", producto_routes); 
+app.use("/api", producto_routes);
 app.use("/api", pedidos_routes);
 app.use("/api", ped_det_routes);
 
