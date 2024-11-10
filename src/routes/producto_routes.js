@@ -25,3 +25,4 @@ router.patch("/productos/:id", patchproductos);
 router.delete("/productos/:id", deleteproductos);
 
 export default router;
+
