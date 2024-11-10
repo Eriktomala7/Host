@@ -1,17 +1,27 @@
 import express from "express";
+import cors from "cors"; // Importa el paquete CORS
 import clientes_routes from "./routes/clientes_routes.js";
 import usuarios_routes from "./routes/usuarios_routes.js";
-import producto_routes from "./routes/producto_routes.js"; // Asegúrate de que esta importación sea correcta
+import producto_routes from "./routes/producto_routes.js";
 import pedidos_routes from "./routes/pedidos_routes.js";
 import ped_det_routes from "./routes/ped_det_routes.js";
 
 const app = express();
+
+// Habilitar CORS para todas las rutas y orígenes
+app.use(cors());  // Permite solicitudes desde cualquier origen
+
+// O bien, si quieres permitir solo solicitudes de un origen específico:
+app.use(cors({
+  origin: 'http://localhost:8100'  // Reemplaza con la URL de tu frontend si es necesario
+}));
+
 app.use(express.json()); // interpreta los objetos enviados como JSON
 
 // Rutas
 app.use("/api", clientes_routes);
 app.use("/api", usuarios_routes);
-app.use("/api", producto_routes); // Asegúrate de que esta ruta esté registrada correctamente
+app.use("/api", producto_routes); 
 app.use("/api", pedidos_routes);
 app.use("/api", ped_det_routes);
 
