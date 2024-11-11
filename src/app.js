@@ -1,5 +1,7 @@
 import express from "express";
-import cors from "cors"; // Importa el paquete CORS
+import cors from "cors";
+import path from 'path';
+import { fileURLToPath } from 'url'; // Esto se usa para obtener __dirname en ES Modules
 import clientes_routes from "./routes/clientes_routes.js";
 import usuarios_routes from "./routes/usuarios_routes.js";
 import producto_routes from "./routes/producto_routes.js";
@@ -8,15 +10,17 @@ import ped_det_routes from "./routes/ped_det_routes.js";
 
 const app = express();
 
-// Habilitar CORS para todas las rutas y orígenes
-app.use(cors());  // Permite solicitudes desde cualquier origen
+// Habilitar CORS
+app.use(cors({ origin: 'http://localhost:8100' }));
 
-// O bien, si quieres permitir solo solicitudes de un origen específico:
-app.use(cors({
-  origin: 'http://localhost:8100'  // Reemplaza con la URL de tu frontend si es necesario
-}));
+// Configura el middleware para servir archivos estáticos (como imágenes)
+// Configura el middleware para servir archivos estáticos (como imágenes)
+const __dirname = path.resolve(); // Cambia path.dirname a path.resolve para obtener la ruta correcta
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use(express.json()); // interpreta los objetos enviados como JSON
+
+// Middleware para interpretar los objetos enviados como JSON
+app.use(express.json());
 
 // Rutas
 app.use("/api", clientes_routes);
