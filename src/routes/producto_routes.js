@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { getproductos, getproductosid, postproductos, putproductos, patchproductos, deleteproductos } from "../controladores/productoctrl.js";
+import { getproductos, getproductosid, postproductos, putproductos, patchproductos, deleteproductos , actualizarStock } from "../controladores/productoctrl.js";
 
 const router = Router();
 
@@ -23,6 +23,7 @@ router.post("/productos", upload.single("prod_imagen"), postproductos); // Modif
 router.put("/productos/:id", putproductos);
 router.patch("/productos/:id", patchproductos);
 router.delete("/productos/:id", deleteproductos);
+router.put("/productos/:id/stock", actualizarStock);
 
 export default router;
 

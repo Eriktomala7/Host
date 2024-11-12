@@ -153,3 +153,28 @@ export const deleteproductos = async (req, res) => {
         return res.status(500).json({ message: "Error en el servidor", error });
     }
 }
+export const actualizarStock = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { prod_stock } = req.body;
+    
+            if (prod_stock === undefined) {
+                return res.status(400).json({ message: "El stock es requerido" });
+            }
+    
+            const [result] = await conmysql.query(
+                "UPDATE productos SET prod_stock = ? WHERE prod_id = ?",
+                [prod_stock, id]
+            );
+    
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: "Producto no encontrado" });
+            }
+    
+            res.json({ message: "Stock actualizado correctamente" });
+        } catch (error) {
+            console.error("Error al actualizar stock:", error);
+            return res.status(500).json({ message: "Error en el servidor", error });
+        }
+    };
+    
